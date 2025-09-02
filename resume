@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Resume | Mallikarjuna Mannem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with Slate and Amber accents -->
+    <!-- Application Structure Plan: A single-page portfolio layout with a fixed side navigation for quick access to key sections: Home (Summary), Skills, Experience, Projects, and Education. This structure is chosen for its intuitive, non-linear navigation, allowing recruiters to jump to the information most relevant to them. Key interactions include a searchable skills filter, an interactive timeline for experience, and expandable cards for projects. This design prioritizes scannability and user engagement over a static, linear document format. -->
+    <!-- Visualization & Content Choices: 
+        1. Summary -> Goal: Inform -> Presentation: Prominent text block -> Interaction: None -> Justification: Sets the stage immediately.
+        2. Skills -> Goal: Organize/Inform -> Viz: Filterable HTML tags and a Chart.js Donut Chart -> Interaction: Live search filter on tags, hover tooltips on chart -> Justification: Allows recruiters to quickly verify required skills and provides a high-level visual summary of expertise areas. -> Library: Chart.js (Canvas).
+        3. Experience (Professional/Volunteer) -> Goal: Organize/Inform -> Presentation: Interactive Vertical Timeline (HTML/CSS) -> Interaction: Click-to-expand details for each role -> Justification: Presents a clean, chronological overview while keeping detailed text hidden until requested, reducing clutter.
+        4. Projects -> Goal: Organize/Inform -> Presentation: Grid of expandable cards (HTML/CSS) -> Interaction: Click-to-reveal full project details -> Justification: Allows users to scan project titles and selectively dive deeper into those of interest.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fdfcfb;
+            color: #1f2937;
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            white-space: nowrap;
+        }
+        .nav-link.active, .nav-link:hover {
+            color: #d97706; /* amber-600 */
+            font-weight: 600;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: -2.375rem;
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+            border: 3px solid #d1d5db;
+            background-color: #fdfcfb;
+            z-index: 10;
+        }
+        .timeline-item.active::before {
+            border-color: #d97706;
+            background-color: #d97706;
+        }
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 300px;
+            width: 100%;
+            max-width: 300px;
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+    </style>
+</head>
+<body class="flex">
+
+    <!-- Side Navigation -->
+    <nav class="fixed top-0 left-0 h-full bg-slate-800 text-white flex flex-col items-center justify-center p-4 space-y-12 z-40">
+        <a href="#home" class="nav-link active" onclick="setActiveLink(this)">HOME</a>
+        <a href="#skills" class="nav-link" onclick="setActiveLink(this)">SKILLS</a>
+        <a href="#experience" class="nav-link" onclick="setActiveLink(this)">EXPERIENCE</a>
+        <a href="#projects" class="nav-link" onclick="setActiveLink(this)">PROJECTS</a>
+        <a href="#education" class="nav-link" onclick="setActiveLink(this)">EDUCATION</a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="ml-16 w-full overflow-y-auto">
+        
+        <!-- Home Section -->
+        <section id="home" class="min-h-screen flex items-center p-8 md:p-16">
+            <div class="max-w-4xl">
+                <h1 class="text-4xl md:text-6xl font-bold text-slate-800">Mallikarjuna Mannem</h1>
+                <h2 class="text-2xl md:text-3xl font-light text-amber-600 mt-2">Data Scientist</h2>
+                
+                <p class="mt-8 text-lg text-slate-600">
+                    Results-driven Data Scientist with a Master's degree in Data Science and Analytics, specializing in statistical modeling, machine learning, and data engineering to solve complex biological and business challenges. Proven experience developing and deploying models with Python and R, with a strong background in managing large-scale, disparate datasets. Eager to apply expertise in genomic data analysis, process optimization, and cloud-based data platforms to advance Bayer's mission of "Health for all, Hunger for none."
+                </p>
+
+                <div class="mt-8 flex space-x-4">
+                    <a href="mailto:mannemm@mail.gvsu.edu" class="text-slate-700 hover:text-amber-600 transition-colors">
+                         <span class="font-semibold">Email:</span> mannemm@mail.gvsu.edu
+                    </a>
+                     <span class="text-slate-400">|</span>
+                    <a href="https://www.linkedin.com/in/mallikarjuna-mannem/" target="_blank" class="text-slate-700 hover:text-amber-600 transition-colors">
+                        <span class="font-semibold">LinkedIn</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="min-h-screen bg-slate-50 p-8 md:p-16">
+            <h2 class="text-3xl font-bold text-slate-800 mb-2">Skills & Technologies</h2>
+            <p class="text-slate-600 mb-8 max-w-3xl">This section provides a comprehensive overview of my technical capabilities, from programming languages and data science methodologies to the specific tools and platforms I use. You can use the search bar to filter for specific skills or explore the chart for a visual breakdown of my expertise.</p>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                <div class="lg:col-span-2">
+                    <input type="text" id="skill-search" placeholder="Search for a skill (e.g., Python, AWS, Tableau)..." class="w-full p-3 mb-6 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition">
+                    <div id="skills-container" class="flex flex-wrap gap-3">
+                        <!-- Skills will be dynamically inserted here -->
+                    </div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <h3 class="text-xl font-semibold text-slate-700 mb-4">Skill Distribution</h3>
+                    <div class="chart-container">
+                        <canvas id="skillsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience Section -->
+        <section id="experience" class="min-h-screen p-8 md:p-16">
+            <h2 class="text-3xl font-bold text-slate-800 mb-2">Career & Experience Timeline</h2>
+            <p class="text-slate-600 mb-12 max-w-3xl">My professional journey is a blend of academic research, corporate roles, and impactful volunteer work. This interactive timeline highlights key responsibilities and achievements at each stage. Click on any entry to expand and view the details of my contributions.</p>
+            <div id="timeline-container" class="relative border-l-2 border-slate-200 ml-12 pl-12 space-y-12">
+                 <!-- Timeline items will be dynamically inserted here -->
+            </div>
+        </section>
+        
+        <!-- Projects Section -->
+        <section id="projects" class="min-h-screen bg-slate-50 p-8 md:p-16">
+            <h2 class="text-3xl font-bold text-slate-800 mb-2">Project Portfolio</h2>
+             <p class="text-slate-600 mb-8 max-w-3xl">I believe in learning by doing. The projects below demonstrate my ability to apply data science principles to solve real-world problems, from analyzing public health data to exploring market trends. Click on any project card to learn more about the challenges, methodologies, and outcomes.</p>
+            <div id="projects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Project cards will be dynamically inserted here -->
+            </div>
+        </section>
+
+        <!-- Education Section -->
+        <section id="education" class="min-h-screen flex items-center justify-center p-8 md:p-16">
+            <div class="text-center">
+                <h2 class="text-3xl font-bold text-slate-800 mb-8">Education</h2>
+                <div class="space-y-8 max-w-2xl mx-auto">
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-slate-200">
+                        <h3 class="text-xl font-semibold text-amber-600">Master of Science, Data Science and Analytics</h3>
+                        <p class="text-slate-600 mt-1">Grand Valley State University, Grand Rapids, MI</p>
+                        <p class="text-slate-500 text-sm mt-1">Expected Graduation: April 2025</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-slate-200">
+                        <h3 class="text-xl font-semibold text-amber-600">Bachelor of Technology, Computer Science and Engineering</h3>
+                        <p class="text-slate-600 mt-1">Andhra University, Visakhapatnam, India</p>
+                        <p class="text-slate-500 text-sm mt-1">Graduated: April 2018</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+<script>
+    const skillsData = {
+        "Programming Languages": ["Python", "R", "SQL", "C", "SAS"],
+        "Data Science": ["Machine Learning", "Statistical Modeling", "Data Engineering", "Data Mining", "Data Visualization", "Time Series Analysis", "ANOVA", "Design of Experiments (DoE)", "High Performance Computing", "Genomic Data Analysis", "Biological Process Monitoring", "Process Optimization"],
+        "Tools & Technologies": ["Jupyter", "GitLab", "Tableau", "Power BI", "Microsoft Fabric", "Databricks", "MS Excel"],
+        "Cloud & Databases": ["GCP", "AWS (Associate)", "Azure (Associate)", "Domino", "MySQL", "PostgreSQL", "MongoDB", "Redis", "Neo4J", "TimescaleDB"]
+    };
+
+    const experienceData = [
+        {
+            role: "Teaching and Research Assistant",
+            company: "Grand Valley State University",
+            location: "Grand Rapids, MI",
+            date: "August 2024 - April 2025",
+            type: "Professional",
+            description: [
+                "Designed and led interactive lab sessions for undergraduate courses on Data Visualization and Database Management, leveraging tools like GCP Looker, Python, and R.",
+                "Conducted research on explainable AI for COVID-19 detection, utilizing advanced statistical and machine learning models to analyze biological and healthcare data."
+            ]
+        },
+        {
+            role: "Data Migration Lead",
+            company: "International Friendships, Inc.",
+            location: "Hudsonville, MI",
+            date: "December 2024",
+            type: "Volunteer",
+            description: [
+                "Led the migration of student data to a new platform, ensuring data integrity and zero loss during the transition.",
+                "Collaborated with the team to ensure smooth system integration and compliance with data handling protocols."
+            ]
+        },
+        {
+            role: "User Research & App Feature Analyst",
+            company: "Open Avenues",
+            location: "",
+            date: "2024",
+            type: "Volunteer",
+            description: [
+                "Conducted user research and analysis to propose new app features, using data to inform product development.",
+                "Applied analytical skills to transform qualitative and quantitative data into actionable insights for feature enhancements."
+            ]
+        },
+        {
+            role: "Data Scientist",
+            company: "CGI",
+            location: "INDIA",
+            date: "March 2023 - August 2023",
+            type: "Professional",
+            description: [
+                "Performed advanced statistical and multivariate data analyses using SAS to derive actionable insights from complex datasets.",
+                "Developed predictive models and machine learning algorithms to forecast trends and behaviors, contributing to data-driven decision-making.",
+                "Managed the end-to-end data lifecycle, from data collection and cleaning to model deployment and visualization."
+            ]
+        },
+        {
+            role: "Data Storage Administrator",
+            company: "Tata Consultancy Services",
+            location: "INDIA",
+            date: "July 2018 - March 2022",
+            type: "Professional",
+            description: [
+                "Managed and upgraded storage systems, including cloud-based solutions using NetApp, Unity, and Azure NetApp Files, to enhance scalability and reliability.",
+                "Led data migration projects, successfully transferring large-scale data across various storage systems with minimal downtime.",
+                "Collaborated with cross-functional teams to design and implement scalable solutions, improving system reliability and data management processes.",
+                "<b>On the Spot Award (2021):</b> Recognized for exceptional performance on a data migration project.",
+                "<b>Best Team Player Award (2022):</b> Awarded for outstanding collaboration during an infrastructure refresh project."
+            ]
+        }
+    ];
+
+    const projectsData = [
+         {
+            title: "Michigan Surface Water Analysis",
+            org: "GVSU",
+            date: "Jan 2024 - Feb 2024",
+            description: "Analyzed complex surface water data to understand and predict PFAS contamination trends, showcasing expertise in handling environmental and biological datasets. Applied advanced statistical methods, including Linear Regression and Random Forest, for model development and forecasting."
+        },
+        {
+            title: "The Evolving Landscape of Cryptocurrency and NFTs",
+            org: "GVSU",
+            date: "Sep 2024 - Dec 2024",
+            description: "Conducted in-depth data analysis on market capitalization and volatility using time series data from CoinMarketCap. Developed a report integrating visual insights and actionable strategies based on statistical analysis, demonstrating skills in data mining and visualization for complex, unstructured data."
+        },
+        {
+            title: "Gun Violence Data Analysis",
+            org: "GVSU",
+            date: "Jan 2024 - Feb 2024",
+            description: "Analyzed gun violence data to uncover geographic and temporal patterns using data cleaning, feature engineering, and geospatial mapping. Created interactive visualizations and plots, providing key insights to aid policymakers in informed decision-making."
+        },
+        {
+            title: "Data Engineering and Database Management",
+            org: "GVSU",
+            date: "Sep 2023 - Dec 2023",
+            description: "Designed and maintained both relational and NoSQL databases (MySQL, PostgreSQL, MongoDB) and streamlined ETL processes using Pentaho for efficient data transformation. Gained practical experience in schema design and managing diverse data requirements."
+        }
+    ];
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Populate Skills
+        const skillsContainer = document.getElementById('skills-container');
+        const allSkills = [];
+        const categoryColors = {
+            "Programming Languages": "bg-sky-100 text-sky-800",
+            "Data Science": "bg-amber-100 text-amber-800",
+            "Tools & Technologies": "bg-teal-100 text-teal-800",
+            "Cloud & Databases": "bg-indigo-100 text-indigo-800"
+        };
+        for (const category in skillsData) {
+            skillsData[category].forEach(skill => {
+                allSkills.push({ name: skill, category: category });
+                const skillTag = document.createElement('span');
+                skillTag.className = `skill-tag px-3 py-1 rounded-full text-sm font-medium ${categoryColors[category]}`;
+                skillTag.textContent = skill;
+                skillTag.dataset.skill = skill.toLowerCase();
+                skillsContainer.appendChild(skillTag);
+            });
+        }
+
+        // Skill Search
+        const skillSearch = document.getElementById('skill-search');
+        skillSearch.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            document.querySelectorAll('.skill-tag').forEach(tag => {
+                if (tag.dataset.skill.includes(searchTerm)) {
+                    tag.style.display = 'inline-block';
+                } else {
+                    tag.style.display = 'none';
+                }
+            });
+        });
+
+        // Skills Chart
+        const ctx = document.getElementById('skillsChart').getContext('2d');
+        const chartData = {
+            labels: Object.keys(skillsData),
+            datasets: [{
+                label: 'Number of Skills',
+                data: Object.values(skillsData).map(arr => arr.length),
+                backgroundColor: [
+                    '#38bdf8', // sky-400
+                    '#f59e0b', // amber-500
+                    '#2dd4bf', // teal-400
+                    '#818cf8'  // indigo-400
+                ],
+                borderColor: '#fdfcfb',
+                borderWidth: 4,
+                hoverOffset: 8
+            }]
+        };
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: chartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            boxWidth: 12,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+
+        // Populate Timeline
+        const timelineContainer = document.getElementById('timeline-container');
+        experienceData.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = `timeline-item ${index === 0 ? 'active' : ''}`;
+            const typeColor = item.type === 'Professional' ? 'text-amber-600' : 'text-sky-600';
+            const bgColor = item.type === 'Professional' ? 'bg-amber-50' : 'bg-sky-50';
+
+            div.innerHTML = `
+                <div class="cursor-pointer" onclick="toggleTimelineItem(this, ${index})">
+                    <p class="text-xs font-semibold uppercase ${typeColor}">${item.type}</p>
+                    <h3 class="text-xl font-semibold text-slate-800">${item.role}</h3>
+                    <p class="text-md font-medium text-slate-600">${item.company} ${item.location ? `| ${item.location}` : ''}</p>
+                    <p class="text-sm text-slate-500 mb-2">${item.date}</p>
+                </div>
+                <div class="timeline-content overflow-hidden transition-all duration-500 ease-in-out ${index === 0 ? 'max-h-[500px]' : 'max-h-0'}">
+                    <ul class="list-disc pl-5 mt-2 space-y-2 text-slate-600">
+                        ${item.description.map(d => `<li>${d}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+            timelineContainer.appendChild(div);
+        });
+
+        // Populate Projects
+        const projectsContainer = document.getElementById('projects-container');
+        projectsData.forEach(project => {
+            const card = document.createElement('div');
+            card.className = "bg-white p-6 rounded-lg shadow-md border border-slate-200 flex flex-col";
+            card.innerHTML = `
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800">${project.title}</h3>
+                    <p class="text-sm font-medium text-amber-600 mb-3">${project.org} | ${project.date}</p>
+                    <p class="project-summary text-slate-600">${project.description.substring(0, 100)}...</p>
+                    <p class="project-full text-slate-600 hidden">${project.description}</p>
+                </div>
+                <button onclick="toggleProjectDetails(this)" class="mt-4 text-sm font-semibold text-amber-600 hover:text-amber-700 self-start">Learn More</button>
+            `;
+            projectsContainer.appendChild(card);
+        });
+        
+        // Intersection Observer for active nav link
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href').substring(1) === entry.target.id) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, { threshold: 0.5 });
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+
+    });
+
+    function setActiveLink(elem) {
+        document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+        elem.classList.add('active');
+    }
+
+    function toggleTimelineItem(header, index) {
+        const content = header.nextElementSibling;
+        const item = header.parentElement;
+
+        document.querySelectorAll('.timeline-item').forEach((el, i) => {
+            if (i !== index) {
+                el.classList.remove('active');
+                el.querySelector('.timeline-content').style.maxHeight = '0px';
+            }
+        });
+
+        item.classList.toggle('active');
+        if (content.style.maxHeight && content.style.maxHeight !== '0px') {
+            content.style.maxHeight = '0px';
+            item.classList.remove('active');
+        } else {
+            content.style.maxHeight = content.scrollHeight + "px";
+        }
+    }
+
+    function toggleProjectDetails(button) {
+        const card = button.parentElement;
+        const summary = card.querySelector('.project-summary');
+        const full = card.querySelector('.project-full');
+
+        summary.classList.toggle('hidden');
+        full.classList.toggle('hidden');
+
+        button.textContent = full.classList.contains('hidden') ? 'Learn More' : 'Show Less';
+    }
+
+</script>
+</body>
+</html>
