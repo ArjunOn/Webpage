@@ -10,7 +10,7 @@
     <!-- Chosen Palette: Warm Neutrals with Slate and Amber accents -->
     <!-- Application Structure Plan: A single-page portfolio layout with a fixed side navigation for quick access to key sections: Home (Summary), Skills, Experience, Projects, and Education. This structure is chosen for its intuitive, non-linear navigation, allowing recruiters to jump to the information most relevant to them. Key interactions include a searchable skills filter, an interactive timeline for experience, and expandable cards for projects. This design prioritizes scannability and user engagement over a static, linear document format. -->
     <!-- Visualization & Content Choices: 
-        1. Summary -> Goal: Inform -> Presentation: Prominent text block -> Interaction: None -> Justification: Sets the stage immediately.
+        1. Summary -> Goal: Inform -> Presentation: Prominent text block and a headshot -> Interaction: None -> Justification: Sets the stage and adds a personal touch immediately.
         2. Skills -> Goal: Organize/Inform -> Viz: Filterable HTML tags and a Chart.js Donut Chart -> Interaction: Live search filter on tags, hover tooltips on chart -> Justification: Allows recruiters to quickly verify required skills and provides a high-level visual summary of expertise areas. -> Library: Chart.js (Canvas).
         3. Experience (Professional/Volunteer) -> Goal: Organize/Inform -> Presentation: Interactive Vertical Timeline (HTML/CSS) -> Interaction: Click-to-expand details for each role -> Justification: Presents a clean, chronological overview while keeping detailed text hidden until requested, reducing clutter.
         4. Projects -> Goal: Organize/Inform -> Presentation: Grid of expandable cards (HTML/CSS) -> Interaction: Click-to-reveal full project details -> Justification: Allows users to scan project titles and selectively dive deeper into those of interest.
@@ -77,22 +77,25 @@
         
         <!-- Home Section -->
         <section id="home" class="min-h-screen flex items-center p-8 md:p-16">
-            <div class="max-w-4xl">
-                <h1 class="text-4xl md:text-6xl font-bold text-slate-800">Mallikarjuna Mannem</h1>
-                <h2 class="text-2xl md:text-3xl font-light text-amber-600 mt-2">Data Scientist</h2>
-                
-                <p class="mt-8 text-lg text-slate-600">
-                    Results-driven Data Scientist with a Master's degree in Data Science and Analytics, specializing in statistical modeling, machine learning, and data engineering to solve complex biological and business challenges. Proven experience developing and deploying models with Python and R, with a strong background in managing large-scale, disparate datasets. Eager to apply expertise in genomic data analysis, process optimization, and cloud-based data platforms to advance Bayer's mission of "Health for all, Hunger for none."
-                </p>
-
-                <div class="mt-8 flex space-x-4">
-                    <a href="mailto:mannemm@mail.gvsu.edu" class="text-slate-700 hover:text-amber-600 transition-colors">
-                         <span class="font-semibold">Email:</span> mannemm@mail.gvsu.edu
-                    </a>
-                     <span class="text-slate-400">|</span>
-                    <a href="https://www.linkedin.com/in/mallikarjuna-mannem/" target="_blank" class="text-slate-700 hover:text-amber-600 transition-colors">
-                        <span class="font-semibold">LinkedIn</span>
-                    </a>
+            <div class="max-w-4xl flex flex-col md:flex-row items-center md:items-start gap-8">
+                <img src="https://placehold.co/150x150/d1d5db/334155?text=Your+Picture" alt="Mallikarjuna Mannem's picture" class="rounded-full w-32 h-32 md:w-48 md:h-48 shadow-lg object-cover">
+                <div>
+                    <h1 class="text-4xl md:text-6xl font-bold text-slate-800">Mallikarjuna Mannem</h1>
+                    <h2 class="text-2xl md:text-3xl font-light text-amber-600 mt-2">Data Scientist</h2>
+                    
+                    <p class="mt-8 text-lg text-slate-600">
+                        Results-driven Data Scientist with a Master's degree in Data Science and Analytics, specializing in statistical modeling, machine learning, and data engineering to solve complex biological and business challenges. Proven experience developing and deploying models with Python and R, with a strong background in managing large-scale, disparate datasets. Eager to apply expertise in genomic data analysis, process optimization, and cloud-based data platforms to advance Bayer's mission of "Health for all, Hunger for none."
+                    </p>
+    
+                    <div class="mt-8 flex space-x-4">
+                        <a href="mailto:mannemm@mail.gvsu.edu" class="text-slate-700 hover:text-amber-600 transition-colors">
+                             <span class="font-semibold">Email:</span> mannemm@mail.gvsu.edu
+                        </a>
+                         <span class="text-slate-400">|</span>
+                        <a href="https://www.linkedin.com/in/mallikarjuna-mannem/" target="_blank" class="text-slate-700 hover:text-amber-600 transition-colors">
+                            <span class="font-semibold">LinkedIn</span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </section>
